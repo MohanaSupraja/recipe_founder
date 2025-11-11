@@ -2,7 +2,11 @@ name: Deploy React App to GitHub Pages
 
 on:
   push:
-    branches: [ "main" ]   # Triggers deployment whenever you push to main
+    branches: [ "main" ]
+
+# ✅ Give write permission to the deployment bot
+permissions:
+  contents: write
 
 jobs:
   build-and-deploy:
@@ -10,29 +14,24 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [18.x]   # Node 24 is too new for react-scripts; use 18 LTS
+        node-version: [18.x]
 
     steps:
-      # 1️⃣ Checkout your repository
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # 2️⃣ Setup Node.js
-      - name: Setup Node.js ${{ matrix.node-version }}
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
           cache: 'npm'
 
-      # 3️⃣ Install dependencies
       - name: Install dependencies
         run: npm install
 
-      # 4️⃣ Build project (disable CI so warnings don’t break the build)
       - name: Build project
         run: CI=false npm run build
 
-      # 5️⃣ Deploy to GitHub Pages branch
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
         with:
